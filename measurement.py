@@ -16,7 +16,6 @@ def run_two_algorithms(costMatrix: list, start: int, times: int):
     ----------
     costMatrix : list
         完全グラフのコスト行列
-        対角成分はNoneとする
     start : int
         近似巡回ルートのスタート地点
     times : int
@@ -85,7 +84,6 @@ def _shuffle_cost_matrix(costMatrix: list, start: int):
     ----------
     costMatrix : list
         完全グラフのコスト行列
-        対角成分はNoneとする
     start : int
         近似巡回ルートのスタート地点
     
@@ -93,7 +91,6 @@ def _shuffle_cost_matrix(costMatrix: list, start: int):
     -------
     shuffledCostMatrix : list
         シャッフルした完全グラフのコスト行列
-        対角成分はNoneとする
     shuffledStart : int
         近似巡回ルートのシャッフルしたスタート地点
     """
@@ -128,7 +125,6 @@ def _calc_total_cost(route: list, costMatrix: list):
         巡回ルート
     costMatrix : list
         完全グラフのコスト行列
-        対角成分はNoneとする
     
     Returns
     -------

@@ -11,7 +11,6 @@ def double_tree_algorithm(costMatrix: list, start: int):
     ----------
     costMatrix : list
         完全グラフのコスト行列
-        対角成分はNoneとする
     start : int
         近似巡回ルートのスタート地点
     
@@ -23,19 +22,14 @@ def double_tree_algorithm(costMatrix: list, start: int):
 
     # 0. コスト行列から重み付き完全グラフを生成
     graph = _create_weighted_graph(costMatrix)
-
     # 1. Primのアルゴリズムで最小全域木を生成
     spanningTree = nx.minimum_spanning_tree(graph, algorithm="prim")
-
     # 2. 最小全域木の各辺を2重化
     duplicatedSpanningTree = _duplicate_weighted_graph(spanningTree)
-
     # 3. 2重化した最小全域木からオイラー路を生成
     eulerianPath = _create_eulerian_path(duplicatedSpanningTree, start)
-
     # 4. オイラー路からハミルトン閉路を生成
     route = _create_hamiltonian_path(eulerianPath)
-
     # 5. ハミルトン閉路を出力して終了
     return route
 
@@ -48,7 +42,6 @@ def christofides_algorithm(costMatrix: list, start: int):
     ----------
     costMatrix : list
         完全グラフのコスト行列
-        対角成分はNoneとする
     start : int
         近似巡回ルートのスタート地点
     
@@ -60,25 +53,18 @@ def christofides_algorithm(costMatrix: list, start: int):
 
     # 0. コスト行列から重み付き完全グラフを生成
     graph = _create_weighted_graph(costMatrix)
-
     # 1. Primのアルゴリズムで最小全域木を生成
     spanningTree = nx.minimum_spanning_tree(graph, algorithm="prim")
-
     # 2. 最小全域木から偶数次数の頂点を除去
     removedGraph = _remove_even_degree_vertices(graph, spanningTree)
-
     # 3. 除去された最小全域木から最小コストの完全マッチングによるグラフを生成
     matchingGraph = _match_minimal_weight(removedGraph)
-
     # 4. 最小全域木と完全マッチングによるグラフを合体
     mergedGraph = _merge_two_graphs(spanningTree, matchingGraph)
-
     # 5. 合体したグラフからオイラー路を生成
     eulerianPath = _create_eulerian_path(mergedGraph, start)
-
     # 6. オイラー路からハミルトン閉路を生成
     route = _create_hamiltonian_path(eulerianPath)
-
     # 7. ハミルトン閉路を出力して終了
     return route
 
@@ -91,7 +77,6 @@ def _create_weighted_graph(costMatrix: list):
     ----------
     costMatrix : list
         完全グラフのコスト行列
-        対角成分はNoneとする
     
     Returns
     -------
@@ -99,10 +84,8 @@ def _create_weighted_graph(costMatrix: list):
         重み付き完全グラフ
     """
 
-    # 重み付き完全グラフのインスタンスを初期化
+    # 重み付き完全グラフを初期化して辺を追加
     graph = nx.Graph()
-
-    # 重み付き完全グラフに辺を追加
     for i in range(len(costMatrix)):
         for j in range(i + 1, len(costMatrix[i])):
             graph.add_edge(i, j, weight=costMatrix[i][j])
@@ -125,7 +108,7 @@ def _duplicate_weighted_graph(graph: nx.Graph):
         引数の重み付けグラフの辺を2重化した重み付けグラフ
     """
 
-    # 各辺を2重化する
+    # 重み付けグラフを初期化して引数のグラフの各辺を2重化
     duplicatedGraph = nx.MultiGraph()
     for v in graph:
         for w in graph[v]:
@@ -156,7 +139,7 @@ def _create_eulerian_path(eulerianGraph: nx.MultiGraph, start: int):
 
     # オイラー路を辿る頂点の順番のリストを生成
     eulerianPath = [edge[0] for edge in eulerianEdges]
-    # スタート地点とゴール地点を一致させる
+    # オイラー路のスタート地点とゴール地点を一致させる
     eulerianPath.append(eulerianEdges[len(eulerianEdges) - 1][1])
 
     return eulerianPath
@@ -181,14 +164,13 @@ def _create_hamiltonian_path(eulerianPath: list):
     hamiltonianPath = []
     # 既出の頂点集合を初期化
     existedVertice = set()
-
     # オイラー路を辿る各頂点を辿り、2回目以降に現れた頂点は無視する
     for vertex in eulerianPath:
         if vertex not in existedVertice:
             hamiltonianPath.append(vertex)
             existedVertice.add(vertex)
 
-    # スタート地点とゴール地点を一致させる
+    # ハミルトン閉路のスタート地点とゴール地点を一致させる
     hamiltonianPath.append(eulerianPath[0])
 
     return hamiltonianPath
@@ -211,11 +193,9 @@ def _remove_even_degree_vertices(graph: nx.Graph, spanningTree: nx.Graph):
        頂点を取り除いたグラフ
     """
 
-    # 頂点を取り除いたグラフを引数のグラフで初期化
+    # 引数のグラフからコピーして初期化し、全域木の偶数次数の頂点を削除
     removedGraph = nx.Graph(graph)
-
     for v in spanningTree:
-        # 全域木の偶数次数の頂点のみグラフから削除
         if spanningTree.degree[v] % 2 == 0:
             removedGraph.remove_node(v)
     
@@ -237,7 +217,7 @@ def _match_minimal_weight(graph: nx.Graph):
         マッチングを構成する辺(2要素のみ持つタプル)のみ持つグラフ
     """
 
-    # 全コストの大小関係を反転させるため、全コストの符号を逆にしたグラフをコピー
+    # グラフの全コストの大小関係を反転させるため、コストの符号を逆にして初期化
     tmpGraph = nx.Graph()
     for edgeData in graph.edges.data():
         tmpGraph.add_edge(edgeData[0], edgeData[1], weight=-edgeData[2]["weight"])
@@ -269,10 +249,8 @@ def _merge_two_graphs(graph1: nx.Graph, graph2: nx.Graph):
         合体したグラフ
     """
 
-    # 合体したグラフを、1つ目のグラフで初期化
+    # 合体したグラフを1つ目のグラフからコピーして初期化し、2つ目のグラフの各辺を追加
     mergedGraph = nx.MultiGraph(graph1)
-
-    # 2つ目のグラフを構成する辺を追加していく
     for edgeData in graph2.edges.data():
         mergedGraph.add_edge(edgeData[0], edgeData[1], weight=edgeData[2]["weight"])
     
