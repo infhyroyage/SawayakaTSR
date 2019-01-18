@@ -95,21 +95,17 @@ def _shuffle_cost_matrix(costMatrix: list, start: int):
         近似巡回ルートのシャッフルしたスタート地点
     """
 
-    # シャッフルした完全グラフのコスト行列を初期化
-    shuffledCostMatrix = []
-    
     # 元のインデックスリストを生成
     indices = range(len(costMatrix))
     # 元のインデックスリストをシャッフルして生成
     shuffledIndices = sample(indices, len(indices))
 
-    # シャッフルした完全グラフのコスト行列を1行ずつ格納
+    # シャッフルした完全グラフのコスト行列を初期化し、1行ずつ格納
+    shuffledCostMatrix = []
     for i in indices:
         tmpShuffledCostMatrix = []
-
         for j in indices:
             tmpShuffledCostMatrix.append(costMatrix[shuffledIndices[i]][shuffledIndices[j]])
-        
         shuffledCostMatrix.append(tmpShuffledCostMatrix)
     
     return shuffledCostMatrix, shuffledIndices.index(start)
@@ -132,10 +128,8 @@ def _calc_total_cost(route: list, costMatrix: list):
         合計コスト
     """
 
-    # 合計コストの初期化
+    # 合計コストを初期化し、巡回ルートの1辺ごとに足し合わせる
     totalCost = 0.0
-
-    # 巡回ルートの1辺ごとに合計コストを足し合わせる
     for i in range(len(route) - 1):
         totalCost += costMatrix[route[i]][route[i + 1]]
 
