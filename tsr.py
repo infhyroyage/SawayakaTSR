@@ -178,7 +178,7 @@ def _create_hamiltonian_path(eulerianPath: list):
 
 def _remove_even_degree_vertices(graph: nx.Graph, spanningTree: nx.Graph):
     """
-    全域木から偶数次数の頂点をグラフから取り除く
+    全域木から偶数次数の頂点をグラフから取り除いた部分ブラフを生成する
 
     Parameters
     ----------
@@ -190,7 +190,7 @@ def _remove_even_degree_vertices(graph: nx.Graph, spanningTree: nx.Graph):
     Returns
     -------
     removedGraph : networkx.Graph
-       頂点を取り除いたグラフ
+       頂点を取り除いた部分グラフ
     """
 
     # 引数のグラフからコピーして初期化し、全域木の偶数次数の頂点を削除
