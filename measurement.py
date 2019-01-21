@@ -47,28 +47,32 @@ def run_two_algorithms(costMatrix: list, start: int, times: int):
 
     for _ in range(times):
         # コスト行列の行と列のインデックスをシャッフル
-        shuffledCostMatrix, shuffledStart = _shuffle_cost_matrix(costMatrix, start)
+        shuffledCostMatrix, shuffledIndices = _shuffle_cost_matrix(costMatrix)
+        # シャッフルしたスタート地点を保持
+        shuffledStart = shuffledIndices.index(start)
 
         # 2重木アルゴリズムを実行し、実行時間を観測
         ready = time()
-        doubleTreeRoute = double_tree_algorithm(shuffledCostMatrix, shuffledStart)
+        doubleTreeShuffledRoute = double_tree_algorithm(shuffledCostMatrix, shuffledStart)
         finish = time()
         # 2重木アルゴリズムで出力された近似巡回ルートを格納
+        doubleTreeRoute = [shuffledIndices[i] for i in doubleTreeShuffledRoute]
         doubleTreeRoutes.append(doubleTreeRoute)
         # 上記近似巡回ルートの合計コストを格納
-        doubleTreeCost = _calc_total_cost(doubleTreeRoute, shuffledCostMatrix)
+        doubleTreeCost = _calc_total_cost(doubleTreeShuffledRoute, shuffledCostMatrix)
         doubleTreeCosts.append(doubleTreeCost)
         # 2重木アルゴリズムの実行時間を格納
         doubleTreeTimes.append((finish - ready) * 1000)
 
         # Christofidesのアルゴリズムを実行し、実行時間を観測
         ready = time()
-        christofidesRoute = christofides_algorithm(shuffledCostMatrix, shuffledStart)
+        christofidesShuffledRoute = christofides_algorithm(shuffledCostMatrix, shuffledStart)
         finish = time()
         # Christofidesのアルゴリズムで出力された近似巡回ルートを格納
+        christofidesRoute = [shuffledIndices[i] for i in christofidesShuffledRoute]
         christofidesRoutes.append(christofidesRoute)
         # 上記近似巡回ルートの合計コストを格納
-        christofidesCost = _calc_total_cost(christofidesRoute, shuffledCostMatrix)
+        christofidesCost = _calc_total_cost(christofidesShuffledRoute, shuffledCostMatrix)
         christofidesCosts.append(christofidesCost)
         # Christofidesのアルゴリズムの実行時間を格納
         christofidesTimes.append((finish - ready) * 1000)
@@ -76,7 +80,7 @@ def run_two_algorithms(costMatrix: list, start: int, times: int):
     return doubleTreeRoutes, doubleTreeCosts, doubleTreeTimes, christofidesRoutes, christofidesCosts, christofidesTimes
 
 
-def _shuffle_cost_matrix(costMatrix: list, start: int):
+def _shuffle_cost_matrix(costMatrix: list):
     """
     コスト行列の行と列のインデックスをシャッフルする
 
@@ -84,15 +88,13 @@ def _shuffle_cost_matrix(costMatrix: list, start: int):
     ----------
     costMatrix : list
         完全グラフのコスト行列
-    start : int
-        近似巡回ルートのスタート地点
     
     Returns
     -------
     shuffledCostMatrix : list
         シャッフルした完全グラフのコスト行列
     shuffledStart : int
-        近似巡回ルートのシャッフルしたスタート地点
+        シャッフルしたインデックス
     """
 
     # 元のインデックスリストを生成
@@ -108,7 +110,7 @@ def _shuffle_cost_matrix(costMatrix: list, start: int):
             tmpShuffledCostMatrix.append(costMatrix[shuffledIndices[i]][shuffledIndices[j]])
         shuffledCostMatrix.append(tmpShuffledCostMatrix)
     
-    return shuffledCostMatrix, shuffledIndices.index(start)
+    return shuffledCostMatrix, shuffledIndices
 
 
 def _calc_total_cost(route: list, costMatrix: list):
