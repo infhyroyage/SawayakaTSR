@@ -20,17 +20,17 @@ def double_tree_algorithm(costMatrix: list, start: int):
         近似巡回ルート
     """
 
-    # 0. コスト行列から重み付き完全グラフを生成
+    # 1. コスト行列から重み付き完全グラフを生成
     graph = _create_weighted_graph(costMatrix)
-    # 1. Primのアルゴリズムで最小全域木を生成
+    # 2. Primのアルゴリズムで最小全域木を生成
     spanningTree = nx.minimum_spanning_tree(graph, algorithm="prim")
-    # 2. 最小全域木の各辺を2重化
+    # 3. 最小全域木の各辺を2重化
     duplicatedSpanningTree = _duplicate_weighted_graph(spanningTree)
-    # 3. 2重化した最小全域木からオイラー路を生成
+    # 4. 2重化した最小全域木からオイラー路を生成
     eulerianPath = _create_eulerian_path(duplicatedSpanningTree, start)
-    # 4. オイラー路からハミルトン閉路を生成
+    # 5. オイラー路からハミルトン閉路を生成
     route = _create_hamiltonian_path(eulerianPath)
-    # 5. ハミルトン閉路を出力して終了
+    # 6. ハミルトン閉路を出力して終了
     return route
 
 
@@ -51,21 +51,21 @@ def christofides_algorithm(costMatrix: list, start: int):
         近似巡回ルート
     """
 
-    # 0. コスト行列から重み付き完全グラフを生成
+    # 1. コスト行列から重み付き完全グラフを生成
     graph = _create_weighted_graph(costMatrix)
-    # 1. Primのアルゴリズムで最小全域木を生成
+    # 2. Primのアルゴリズムで最小全域木を生成
     spanningTree = nx.minimum_spanning_tree(graph, algorithm="prim")
-    # 2. 最小全域木から偶数次数の頂点を除去
+    # 3. 最小全域木から偶数次数の頂点を除去
     removedGraph = _remove_even_degree_vertices(graph, spanningTree)
-    # 3. 除去された最小全域木から最小コストの完全マッチングによるグラフを生成
+    # 4. 除去された最小全域木から最小コストの完全マッチングによるグラフを生成
     matchingGraph = _match_minimal_weight(removedGraph)
-    # 4. 最小全域木と完全マッチングによるグラフを合体
+    # 5. 最小全域木と完全マッチングによるグラフを合体
     mergedGraph = _merge_two_graphs(spanningTree, matchingGraph)
-    # 5. 合体したグラフからオイラー路を生成
+    # 6. 合体したグラフからオイラー路を生成
     eulerianPath = _create_eulerian_path(mergedGraph, start)
-    # 6. オイラー路からハミルトン閉路を生成
+    # 7. オイラー路からハミルトン閉路を生成
     route = _create_hamiltonian_path(eulerianPath)
-    # 7. ハミルトン閉路を出力して終了
+    # 8. ハミルトン閉路を出力して終了
     return route
 
 
